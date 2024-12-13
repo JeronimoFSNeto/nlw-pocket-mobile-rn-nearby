@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Alert, Text } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
+import { router } from "expo-router";
 
 import { api } from "@/services/api";
 import { s } from "@/components/home/styles";
@@ -60,7 +61,7 @@ export default function Home() {
   }, [category]);
 
   return (
-    <View style={s.map}>
+    <View style={s.container}>
       <Categories
         data={categories}
         onSelect={setCategory}
@@ -68,7 +69,7 @@ export default function Home() {
       />
 
       <MapView
-        style={s.mapView}
+        style={s.map}
         initialRegion={{
           latitude: currentLocation.latitude,
           longitude: currentLocation.longitude,
@@ -95,10 +96,10 @@ export default function Home() {
             }}
             image={require("@/assets/pin.png")}
           >
-            <Callout>
+            <Callout onPress={() => router.navigate(`/market/${item.id}`)}>
               <View>
-                <Text style={s.calloutTitle}>{item.name}</Text>
-                <Text style={s.calloutDescription}>{item.address}</Text>
+                <Text style={s.name}>{item.name}</Text>
+                <Text style={s.address}>{item.address}</Text>
               </View>
             </Callout>
           </Marker>
