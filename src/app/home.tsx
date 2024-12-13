@@ -1,13 +1,23 @@
 import { useEffect, useState } from "react";
-import { View, Alert } from "react-native";
+import { View, Alert, Text } from "react-native";
+import MapView, { Callout, Marker } from "react-native-maps";
 
 import { api } from "@/services/api";
+import { s } from "@/components/home/styles";
 
 import { Places } from "@/components/places";
 import { PlaceProps } from "@/components/place";
 import { Categories, CategoriesProps } from "@/components/categories";
 
-type MakertsProps = PlaceProps;
+type MakertsProps = PlaceProps & {
+  latitude: number;
+  longitude: number;
+};
+
+const currentLocation = {
+  latitude: -23.561187293883442,
+  longitude: -46.656451388116494,
+};
 
 export default function Home() {
   const [categories, setCategories] = useState<CategoriesProps>([]);
@@ -18,7 +28,9 @@ export default function Home() {
     try {
       const { data } = await api.get("/categories");
       setCategories(data);
-      setCategory(data[0].id);
+      if (data.length > 0) {
+        setCategory(data[0].id);
+      }
     } catch (error) {
       console.log(error);
       Alert.alert("Categorias", "Não foi possível carregar as categorias");
@@ -31,11 +43,11 @@ export default function Home() {
         return;
       }
 
-      const { data } = await api.get("/markets/category/" + category);
+      const { data } = await api.get(`/markets/category/${category}`);
       setMarkets(data);
     } catch (error) {
       console.log(error);
-      Alert.alert("Locais", "Não foi possível carregar as locais");
+      Alert.alert("Locais", "Não foi possível carregar os locais");
     }
   }
 
@@ -48,12 +60,51 @@ export default function Home() {
   }, [category]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#CECECE" }}>
+    <View style={s.map}>
       <Categories
         data={categories}
         onSelect={setCategory}
         selected={category}
       />
+
+      <MapView
+        style={s.mapView}
+        initialRegion={{
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+      >
+        <Marker
+          identifier="current"
+          coordinate={{
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+          }}
+          image={require("@/assets/location.png")}
+        />
+
+        {markets.map((item) => (
+          <Marker
+            key={item.id}
+            identifier={item.id}
+            coordinate={{
+              latitude: item.latitude,
+              longitude: item.longitude,
+            }}
+            image={require("@/assets/pin.png")}
+          >
+            <Callout>
+              <View>
+                <Text style={s.calloutTitle}>{item.name}</Text>
+                <Text style={s.calloutDescription}>{item.address}</Text>
+              </View>
+            </Callout>
+          </Marker>
+        ))}
+      </MapView>
+
       <Places data={markets} />
     </View>
   );
