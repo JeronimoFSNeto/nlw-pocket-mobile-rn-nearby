@@ -9,6 +9,7 @@ import { s } from "@/components/home/styles";
 import { Places } from "@/components/places";
 import { PlaceProps } from "@/components/place";
 import { Categories, CategoriesProps } from "@/components/categories";
+import { Loading } from "@/components/loading";
 
 type MakertsProps = PlaceProps & {
   latitude: number;
@@ -67,45 +68,47 @@ export default function Home() {
         onSelect={setCategory}
         selected={category}
       />
-
-      <MapView
-        style={s.map}
-        initialRegion={{
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-      >
-        <Marker
-          identifier="current"
-          coordinate={{
+      {markets.length > 0 ? (
+        <MapView
+          style={s.map}
+          initialRegion={{
             latitude: currentLocation.latitude,
             longitude: currentLocation.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
           }}
-          image={require("@/assets/location.png")}
-        />
-
-        {markets.map((item) => (
+        >
           <Marker
-            key={item.id}
-            identifier={item.id}
+            identifier="current"
             coordinate={{
-              latitude: item.latitude,
-              longitude: item.longitude,
+              latitude: currentLocation.latitude,
+              longitude: currentLocation.longitude,
             }}
-            image={require("@/assets/pin.png")}
-          >
-            <Callout onPress={() => router.navigate(`/market/${item.id}`)}>
-              <View>
-                <Text style={s.name}>{item.name}</Text>
-                <Text style={s.address}>{item.address}</Text>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
-      </MapView>
+            image={require("@/assets/location.png")}
+          />
 
+          {markets.map((item) => (
+            <Marker
+              key={item.id}
+              identifier={item.id}
+              coordinate={{
+                latitude: item.latitude,
+                longitude: item.longitude,
+              }}
+              image={require("@/assets/pin.png")}
+            >
+              <Callout onPress={() => router.navigate(`/market/${item.id}`)}>
+                <View>
+                  <Text style={s.name}>{item.name}</Text>
+                  <Text style={s.address}>{item.address}</Text>
+                </View>
+              </Callout>
+            </Marker>
+          ))}
+        </MapView>
+      ) : (
+        <Loading />
+      )}
       <Places data={markets} />
     </View>
   );

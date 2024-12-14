@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import { colors } from "@/styles/theme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import {
   useFonts,
   Rubik_400Regular,
