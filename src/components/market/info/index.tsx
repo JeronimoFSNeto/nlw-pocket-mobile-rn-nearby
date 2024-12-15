@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { Icon, IconProps } from "@tabler/icons-react-native";
+import { IconProps } from "@tabler/icons-react-native";
 
 import { s } from "./styles";
 import { colors } from "@/styles/theme";

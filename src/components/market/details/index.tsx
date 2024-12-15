@@ -30,9 +30,19 @@ export function Details({ data }: Props) {
       <View style={s.group}>
         <Text style={s.title}>Informações</Text>
 
-        <Info icon={IconTicket} description={`${data.coupons} cupons`} />
+        <Info
+          icon={IconTicket}
+          description={`${data.coupons} cupons disponíveis`}
+        />
         <Info icon={IconMapPin} description={data.address} />
         <Info icon={IconPhone} description={data.phone} />
+      </View>
+
+      <View style={s.group}>
+        <Text style={s.title}>Regulamento</Text>
+        {data.rules.map((item) => (
+          <Text key={item.id}>{`\u2022 ${item.description}`}</Text>
+        ))}
       </View>
     </View>
   );
